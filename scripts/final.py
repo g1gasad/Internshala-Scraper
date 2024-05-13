@@ -1,9 +1,12 @@
 import os
+import sys
 from dotenv import load_dotenv
 from selenium import webdriver
 import pandas as pd
 import time
 import math
+from src.logger import logging
+from src.exception import CustomException
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from scripts.preprocess_data import preprocessor
@@ -16,19 +19,25 @@ def automation(posts_per_page, pages_to_scrape):
     options.add_argument(os.getenv("CHROME_PATH"))
     options.add_argument(os.getenv("DEFAULT_PROFILE_PATH"))
     CHROMEDRIVER = Service(os.getenv("CHROMEDRIVER_PATH"))
-
     website_page = os.getenv("INTERNSHALA_PAGE_URL")
+    header_string_xpath = os.getenv("HEADER_STRING_XPATH")
+    
+    logging.info("Loaded environment variables")
     driver = webdriver.Chrome(service=CHROMEDRIVER, options=options)
+    
+    logging.info("Starting automation")
+    
     driver.get(website_page)
     wait = WebDriverWait(driver, 10)
 
-    header_string_xpath = os.getenv("HEADER_STRING_XPATH")
     header_string = driver.find_element(by='xpath', value=header_string_xpath).text
     total_posts = int(header_string.split()[0])
     number_of_pages = math.ceil(total_posts / posts_per_page)
 
     df = scrape_data(driver, wait)
-
+    
+    logging.info("Scraped data from Page:1")
+    
     try:
         if number_of_pages > 1:
             for page_number in range(2, pages_to_scrape + 1):
@@ -38,8 +47,19 @@ def automation(posts_per_page, pages_to_scrape):
                 driver.get(website_page)
                 wait_for_header(header_string_xpath, wait)
                 new_df = scrape_data(driver, wait)
+                
+                logging.info(f"Scraped data from Page:{page_number}")
+                
                 df = pd.concat([df, new_df], axis=0, ignore_index=True)
+                
+                logging.info(f"Concatenated data from Page:{page_number}")
+                
                 time.sleep(2)
+                
+    except Exception as e:
+        logging.error(f"Error: {e}")
+        raise CustomException(e, sys)
+    
     finally:
         driver.quit()
 
@@ -55,4 +75,5 @@ def automation(posts_per_page, pages_to_scrape):
     # Save the DataFrame to Excel
     df.to_excel(file_path, index=False)
 
+    logging.info("Saved data to Excel")
 

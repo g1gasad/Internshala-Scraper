@@ -1,6 +1,7 @@
 import pandas as pd
 import time
 from src.exception import CustomException
+from src.logger import logging
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -90,4 +91,7 @@ def scrape_data(driver, wait):
             "Status": statuses
             }
     df = pd.DataFrame(data)
+    
+    logging.info("DataFrame Created")
+    
     return df
