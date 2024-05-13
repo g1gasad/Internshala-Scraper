@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# Folder
+ScrapedData/
+
 # Distribution / packaging
 .Python
 build/

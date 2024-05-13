@@ -14,7 +14,7 @@ def scrape_data(driver, wait):
     scroll_increment = 1000  # Adjust this value to control the scroll speed
     page_height = driver.execute_script("return Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight );")
     # print(page_height)
-    for distance in range(0, page_height, scroll_increment):
+    for _ in range(0, page_height, scroll_increment):
         driver.execute_script(f"window.scrollBy(0, {scroll_increment});")
         time.sleep(0.1)
 
@@ -34,7 +34,7 @@ def scrape_data(driver, wait):
 
     for container in containers:
         name = container.find_element(by='xpath', value='.//h3[@class="heading_4_5 profile"]').text
-        print(name)
+        # print(name)
         
         try:
             link = container.find_element(by='xpath', value='.//a[@class="button_easy_apply_t view_detail_button"]').get_attribute('href')
@@ -64,7 +64,7 @@ def scrape_data(driver, wait):
             duration = container.find_element(by='xpath', value='.//div[@class="other_detail_item "][2]/div[@class="item_body"]').text
         except:
             duration = container.find_element(by='xpath', value='.//div[@class="other_detail_item large_stipend_text"][2]/div[@class="item_body"]').text
-        print(start_date, duration)
+        # print(start_date, duration)
         salary = container.find_element(by='xpath', value='.//span[@class="stipend"]').text
         employment_type = container.find_element(by='xpath', value='.//div[@class="other_label_container"]/div[1]/div').text
         status = container.find_element(by='xpath', value='.//div[@class="success_and_early_applicant_wrapper"]/div').text
