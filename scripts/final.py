@@ -13,7 +13,7 @@ from scripts.preprocess_data import preprocessor
 from scripts.scraper import scrape_data, wait_for_header
 load_dotenv()
 
-def automation(posts_per_page, pages_to_scrape):
+def automation():
 
     options = webdriver.ChromeOptions()
     options.add_argument(os.getenv("CHROME_PATH"))
@@ -32,7 +32,7 @@ def automation(posts_per_page, pages_to_scrape):
 
     header_string = driver.find_element(by='xpath', value=header_string_xpath).text
     total_posts = int(header_string.split()[0])
-    number_of_pages = math.ceil(total_posts / posts_per_page)
+    number_of_pages = math.ceil(total_posts / 42)
 
     df = scrape_data(driver, wait)
     
@@ -40,7 +40,7 @@ def automation(posts_per_page, pages_to_scrape):
     
     try:
         if number_of_pages > 1:
-            for page_number in range(2, pages_to_scrape + 1):
+            for page_number in range(2, 7):
                 website_page = website_page.replace(website_page[-2], str(page_number))
                 driver.execute_script("window.open('', '_blank');")
                 driver.switch_to.window(driver.window_handles[page_number-1])

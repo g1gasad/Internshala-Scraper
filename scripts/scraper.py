@@ -35,7 +35,7 @@ def scrape_data(driver, wait):
 
     for container in containers:
         name = container.find_element(by='xpath', value='.//h3[@class="heading_4_5 profile"]').text
-        # print(name)
+        print(name)
         
         try:
             link = container.find_element(by='xpath', value='.//a[@class="button_easy_apply_t view_detail_button"]').get_attribute('href')
@@ -66,7 +66,11 @@ def scrape_data(driver, wait):
         except:
             duration = container.find_element(by='xpath', value='.//div[@class="other_detail_item large_stipend_text"][2]/div[@class="item_body"]').text
         # print(start_date, duration)
-        salary = container.find_element(by='xpath', value='.//span[@class="stipend"]').text
+        try:
+            salary = container.find_element(by='xpath', value='.//span[@class="stipend"]').text
+        except:
+            salary = "Could Not Fetch"
+            print(salary)
         employment_type = container.find_element(by='xpath', value='.//div[@class="other_label_container"]/div[1]/div').text
         status = container.find_element(by='xpath', value='.//div[@class="success_and_early_applicant_wrapper"]/div').text
         
